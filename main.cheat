@@ -1,11 +1,23 @@
 % k8s
 
 # 强制删除pod
-kubectl -n <ns> delete pod <pod-name>  --grace-period=0 --force
+kubectl delete -n <ns> pod <pod-name>  --grace-period=0 --force
+
+# 查看node标签
+kubectl get node --show-labels| awk {'printf ("%5s\t%s\n", $1, $6)'}
+
+# 添加node标签
+kubectl label nodes <node-name> worker=true
+
+# 删除node标签
+kubectl label nodes <node-name> worker-
+
+# 覆盖之前node标签
+kubectl label nodes <node-name> worker=false --overwrite
 
 $ ns : kubectl get ns | tail -n +2| awk '{print $1}'
-$ pod-name : kubectl get pod -A
-
+$ node-name : kubectl get node | tail -n +2| awk '{print $1}'
+$ pod-name : kubectl get pod -A | tail -n +2| awk '{print $2}'
 
 % grep, rg
 # 过滤空行和注释-ripgrep
