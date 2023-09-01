@@ -1,0 +1,108 @@
+% k8s
+
+# 强制删除pod
+kubectl -n <ns> delete pod <pod-name>  --grace-period=0 --force
+
+$ ns : kubectl get ns | tail -n +2| awk '{print $1}'
+$ pod-name : kubectl get pod -A
+
+
+% grep, rg
+# 过滤空行和注释-ripgrep
+rg -v '^(\s*#.*|\s*)$' <filename>
+
+# 过滤空行和注释-grep
+grep -Ev '^$|#' <filename>
+
+
+
+% find, fzf
+# 删除目录下的指定类型文件
+find . -name "<txt>"   -type f -print0 | xargs -0 rm -rf
+
+
+# 查找指定文件，然后使用sed进行替换
+find . -name "*.<txt>" -type f -print0 | xargs -0 sed -i 's@<old>@<new>@g'
+
+
+% ln
+# 创建软链接
+ln -s <source-dirname> <destination-dirname>
+
+# 更新软链接
+ln -sfn <source-dirname> <destination-dirname>
+
+# 删除软链接
+unlink <sample-dirname>
+
+% sed
+# 删除空白行，并备份
+sed -i.$(date +"%Y%m%d%H%M%S")-bak '/^$/d' <filename>
+
+# 替换文本
+sed -i.$(date +"%Y%m%d%H%M%S")-bak s@<old>@<new>@g <filename>
+
+# 插入行，在指定的行数之后
+sed -i.$(date +"%Y%m%d%H%M%S")-bak '<n>a <content>' <filename>
+
+# 删除行，指定行范围
+sed -i.$(date +"%Y%m%d%H%M%S")-bak '<n>,<m>d' <filename>
+
+# 以指定文本开头，替换后面匹配的内容
+sed -i.$(date +"%Y%m%d%H%M%S")-bak '/^<string>/  s/<old>/<new>/g' <filename>
+
+# 同时执行多个 sed 动作
+sed -i.$(date +"%Y%m%d%H%M%S")-bak -e 's/<old-a>/<new-a>/g; s/<old-b>/<new-b>/g' <filename>
+
+$ filename : ls
+
+% scp
+
+# 将文件从服务器复制到本地
+scp -P <port> -r <remote-user>@<remote-host>:<remote-path> <local-files>
+
+# 将文件从本地复制到服务器
+scp -P <port> -r <local-files> <remote-user>@<remote-host>:<remote-path>
+
+$ local-files : ls
+$ port : echo -e "60022\n22"
+$ remote-user : echo -e "$(whoami)\nroot"
+$ remote-path : echo -e "/data/\n/tmp/"
+
+% apt
+
+# 删除软件及其配置文件
+apt remove --purge <package-name>
+
+# 列出包的依赖项
+apt depends <package-name>
+
+
+
+% rsync
+
+# 来自服务器的文件（接受*和正则表达式）
+rsync -avzPs '<user>@<server>:<remote-folder>/*' <local-folder>
+
+# 来自具有特殊端口的服务器的文件（接受*和正则表达式）
+rsync -e 'ssh -p <port>' -avzPs '<user>@<server>:<remote-folder>/*' <local-folder>
+
+# 来自服务器的具有特殊端口和特殊密钥的文件（接受*和正则表达式）
+rsync -e 'ssh -p <port> -i <sshkey>' -avzPs '<user>@<server>:<remote-folder>/*' <local-folder>
+
+# 来自服务器的具有特殊密钥的文件（接受*和正则表达式）
+rsync -e 'ssh -i <sshkey>' -avzPs '<user>@<server>:<remote-folder>/*' <local-folder>
+
+# 本地同步到服务器的文件（接受*和正则表达式）
+rsync -avzPs <local-folder> '<user>@<server>:<remote-folder>/'
+
+# 本地同步到具有特殊端口的服务器的文件（接受*和正则表达式）
+rsync -e 'ssh -p <port>' <local-folder> -avzPs '<user>@<server>:<remote-folder>/*'
+
+# 本地同步到服务器的具有特殊端口和特殊密钥的文件（接受*和正则表达式）
+rsync -e 'ssh -p <port> -i <sshkey>' <local-folder> -avzPs '<user>@<server>:<remote-folder>/*'
+
+# 本地同步到服务器的具有特殊密钥的文件（接受*和正则表达式）
+rsync -e 'ssh -i <sshkey>' <local-folder> -avzPs '<user>@<server>:<remote-folder>/*'
+
+$ local-folder : echo -e "$(pwd)\n/home"
