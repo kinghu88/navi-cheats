@@ -1,8 +1,21 @@
-% k8s
+% k8s, pod
 
 # 强制删除pod
 kubectl delete -n <ns> pod <pod-name>  --grace-period=0 --force
 
+# 具体到pod中某个容器
+kubectl logs -n <ns> <pod-name> -c  <container-name> -f
+
+# 进入容器
+kubectl  exec -it -n <ns> <container-name> -- /bin/bash
+
+# 从容器cp到本地
+kubectl cp <ns>/<pod-name>:<remote-file> <local-file>
+
+# 从本地cp到容器
+kubectl cp <local-file> <ns>/<pod-name>:<remote-file>:<remote-file>
+
+% k8s, node
 # 查看node标签
 kubectl get node --show-labels| awk {'printf ("%5s\t%s\n", $1, $6)'}
 
@@ -15,9 +28,40 @@ kubectl label nodes <node-name> worker-
 # 覆盖之前node标签
 kubectl label nodes <node-name> worker=false --overwrite
 
+# 设置默认sc
+kubectl patch storageclass <sc-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+
+% k8s, stain
+# 查看污点
+kubectl describe nodes <node-name> |grep Taints| awk '{print $2}'|awk -F ':' '{print $1}'
+
+# 添加污点1
+kubectl taint node <node-name> <stain-name>="":NoExecute
+
+# 添加污点1
+kubectl taint node <node-name> <stain-name>="":NoSchedule
+
+% k8s, delete
+# 删除污点
+kubectl taint node <node-name> <stain-name>-
+
+# 删除NAMESPACE
+kubectl delete namespace <ns> --force --grace-period=0
+
+% k8s, deploy
+# 重启deployment
+kubectl rollout restart deploy <deploy-name> -n <ns>
+
+# 撤销本次发布回滚到上一个部署版本
+kubectl rollout undo deploy <deploy-name> -n <ns>
+
+
+
 $ ns : kubectl get ns | tail -n +2| awk '{print $1}'
 $ node-name : kubectl get node | tail -n +2| awk '{print $1}'
 $ pod-name : kubectl get pod -A | tail -n +2| awk '{print $2}'
+$ deploy-name : kubectl get deploy -A | tail -n +2| awk '{print $2}'
+
 
 % grep, rg
 # 过滤空行和注释-ripgrep
