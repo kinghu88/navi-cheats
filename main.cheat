@@ -59,8 +59,8 @@ kubectl rollout undo deploy <deploy-name> -n <ns>
 
 $ ns : kubectl get ns | tail -n +2| awk '{print $1}'
 $ node-name : kubectl get node | tail -n +2| awk '{print $1}'
-$ pod-name : kubectl get pod -A | tail -n +2| awk '{print $2}'
-$ deploy-name : kubectl get deploy -A | tail -n +2| awk '{print $2}'
+$ pod-name : kubectl get pod -A | tail -n +2| awk '{print $1}'
+$ deploy-name : kubectl get deploy -A | tail -n +2| awk '{print $1}'
 
 
 % grep, rg
